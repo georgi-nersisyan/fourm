@@ -2,9 +2,12 @@
 
 :root {
   --background: #000c24;
-  --foreground: #e6e6e6;
+  --foreground: #c7c7c7;
   --header-bg: #101c22;
   --post-bg: #121f29;
+  --primary-border: #1a2b3c;
+  --submit: #1a66e8;
+  --error: #ff4d4d;
 }
 
 @theme inline {
@@ -13,13 +16,16 @@
   --font-sans: var(--font-geist-sans);
   --color-header-bg: var(--header-bg);
   --color-post-bg:  var(--post-bg);
+  --color-primary-border: var(--primary-border);
+  --color-submit: var(--submit);
+  --color-error: var(--error);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
   --background: #0c161b;
-  --foreground: #e6e6e6;
+  --foreground: #b5b9e1;
   }
 }
 
@@ -27,5 +33,5 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-
+  outline: none;
 }
