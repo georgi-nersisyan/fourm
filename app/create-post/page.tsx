@@ -1,20 +1,16 @@
-"use client";
+"use client"
 
 import React, { useState } from "react";
-import { IPost, postItems } from "../components/post-items";
 
 export default function CreatePost() {
-  const [posts, setPosts] = useState<IPost[]>(postItems);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isTitleError, setIsTitleError] = useState<boolean>(false);
   const [isDescriptionError, setIsDescriptionError] = useState<boolean>(false);
   const handleTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.length <= 300) {
-    setTitle(e.target.value);
-    setIsTitleError(false);
-    } else {
-      setIsTitleError(true);
+      setTitle(e.target.value);
+      setIsTitleError(false);
     }
   };
 
@@ -22,42 +18,46 @@ export default function CreatePost() {
     if (e.target.value.length <= 1000) {
       setDescription(e.target.value);
       setIsDescriptionError(false);
-    } else {
-      setIsDescriptionError(true);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.length > 0) {
-      const newPost: IPost = {
-        id: posts.length + 1,
-        title: title,
+
+      const savedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+
+      const newPost = {
+        id: Date.now(),
+        title,
         content: description,
       };
-      setPosts([...posts, newPost]);
       setTitle("");
       setDescription("");
-    } else {
-      alert("Ti dolbaeb.");
-    }
-  }
 
-  console.log(description);
+      localStorage.setItem("posts", JSON.stringify([...savedPosts, newPost]));
+      setIsTitleError(false);
+    } else {
+      setIsTitleError(true);
+    }
+  };
 
   return (
     <div className="w-full p-6 flex flex-col justify-center items-center">
-      <form className="w-2xl flex flex-col gap-7 p-2.5">
+      <form className="w-2xl flex flex-col gap-7 p-2.5" onSubmit={handleSubmit}>
         <h3 className="text-5xl text-start">Create post</h3>
 
         <div className="w-full flex flex-col gap-2">
           <input
             type="text"
-            placeholder="Title"
-            className={"w-full p-2.5 rounded-2xl border-2 border-solid border-primary-border text-xl" + `${isTitleError ? " border-errror" : "border-primary-border"}`+ `${isTitleError ? " text-errror" : "text-foreground"}`}
+            placeholder="Title*"
+            className={
+              "w-full p-2.5 rounded-2xl border-2 text-xl" +
+              `${isTitleError ? " border-error" : "border-primary-border"}` +
+              `${isTitleError ? " text-error" : "text-foreground"}`
+            }
             onChange={handleTitle}
             value={title}
-            required
           />
           <span>{title.length}/300</span>
         </div>
@@ -65,9 +65,13 @@ export default function CreatePost() {
         <div className="w-full flex flex-col gap-2">
           <textarea
             placeholder="content"
-            className={"w-full p-2.5 rounded-2xl border-2 border-primary-border text-xl resize-none" + `${isDescriptionError ? " border-errror" : "border-primary"}` + `${isDescriptionError ? " text-errror" : "text-foreground"}`}
+            className={
+              "w-full p-2.5 rounded-2xl border-2 text-xl resize-none" +
+              `${isDescriptionError ? " border-error" : "border-primary"}` +
+              `${isDescriptionError ? " text-error" : "text-foreground"}`
+            }
             rows={7}
-            onChange={handleDescription} 
+            onChange={handleDescription}
             value={description}
           ></textarea>
           <span>{description.length}/1000</span>
