@@ -2,7 +2,9 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "swiper/css/navigation";
 import { IMedia } from "./post-items";
+import { Navigation } from "swiper/modules";
 
 interface ImagesSwiperProps {
   media: IMedia[];
@@ -10,11 +12,13 @@ interface ImagesSwiperProps {
 
 export default function PostSwiper({ media }: ImagesSwiperProps) {
   return (
-    <div className="w-full max-w-3xl mx-auto">
+    <div>
       <Swiper
         spaceBetween={20}
         simulateTouch={true}
         slidesPerView={1}
+        modules={[Navigation]}
+        navigation={true}
         className="h-[500px]"
       >
         {media.map((media) =>
@@ -35,15 +39,15 @@ export default function PostSwiper({ media }: ImagesSwiperProps) {
               className="flex items-center justify-center"
             >
               <div className="w-full h-full">
-                <iframe
+                <video
                   width="100%"
                   height="400"
-                  src={media.src.replace("watch?v=", "embed/")}
+                  src={media.src}
                   title="Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="pointer-events-none rounded-2xl"
+                  controls
+                  muted
+                  autoPlay
+                  className="max-w-full max-h-full object-contain rounded-2xl"
                 />
               </div>
             </SwiperSlide>
