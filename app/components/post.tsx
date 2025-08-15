@@ -9,8 +9,8 @@ interface PostProps{
 export default function Post({post}:PostProps) {
   return (
     <div className='w-3xl p-4 rounded-lg shadow-md bg-post-bg flex flex-col justify-center gap-3'>
-        <h4 className='text-3xl'>{post.title.length >= 50 ? post.title.slice(0, 50)+'...' : post.title}</h4>
-        <span className='text-gray-300'>{post.content}</span>
+        <h4 className='text-3xl break-words whitespace-pre-wrap'>{post.title.length >= 50 ? post.title.slice(0, 50)+'...' : post.title}</h4>
+        <span className='text-gray-300 break-words whitespace-pre-wrap'>{post.content}</span>
 
         {post.media ? <PostSwiper media={post.media} /> : null}
     </div>

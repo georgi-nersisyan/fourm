@@ -22,6 +22,8 @@ export interface IMedia {
     id: number;
     src: string;
     type: "image" | "video";
+    name?:string,
+    size?:number
 }
 
 export interface IPost {
