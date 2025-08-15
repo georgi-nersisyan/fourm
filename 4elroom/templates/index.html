@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }
+        a { display: inline-block; margin: 10px; padding: 10px 20px;
+            background: #4CAF50; color: white; text-decoration: none; border-radius: 5px; }
+        a:hover { background: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Добро пожаловать!</h1>
+    <p>Зарегистрируйтесь или войдите в свой аккаунт</p>
+    <a href="{{ url_for('register') }}">Регистрация</a>
+    <a href="{{ url_for('login') }}">Вход</a>
+</body>
+</html>
