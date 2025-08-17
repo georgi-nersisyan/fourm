@@ -1,8 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignPage() {
   const [username, setUsername] = useState("");
@@ -11,10 +9,8 @@ export default function SignPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
-  const {isLoggedIn, setIsLoggedIn} = useAuth();
-  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -29,8 +25,6 @@ export default function SignPage() {
       if (res.ok) {
         setMessage(data.message);
         setIsError(false);
-        setIsLoggedIn(true);
-        router.push("/profile");
       } else {
         setMessage(data.error || "Ошибка регистрации");
         setIsError(true);

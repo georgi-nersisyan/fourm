@@ -1,16 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
-  const router = useRouter();
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +24,6 @@ export default function LoginPage() {
       if (res.ok) {
         setMessage(data.message);
         setIsError(false);
-        setIsLoggedIn(true);
-        router.push("/profile");
       } else {
         setMessage(data.error || "Ошибка авторизации");
         setIsError(true);
@@ -43,7 +37,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="p-4 flex flex-col gap-3 justify-center items-center">
+ <div className="p-4 flex flex-col gap-3 justify-center items-center">
       <form onSubmit={handleSubmit} className="w-xl flex flex-col gap-7 p-2.5">
         <h1 className="text-5xl font-bold">Log in</h1>
 
