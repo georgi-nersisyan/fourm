@@ -8,9 +8,10 @@
   --primary-border: #1a2b3c;
   --submit: #1a66e8;
   --error: #ff4d4d;
-  --login: #be302e;
+  --login: #c0341e;
   --sign: #2e63be;
   --link: #497ace;
+  --logout: #db110e;
 }
 
 @theme inline {
@@ -23,8 +24,9 @@
   --color-submit: var(--submit);
   --color-error: var(--error);
   --color-login: var(--login);
-  --color-link: var(--link);
   --color-sign: var(--sign);
+  --color-link: var(--link);
+  --color-logout: var(--logout);
   --font-mono: var(--font-geist-mono);
 }
 
