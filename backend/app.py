@@ -4,18 +4,19 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_cors import CORS
 
-# Инициализация приложения
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SECRET_KEY'] = 'secret123'
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # 🔥 для работы cookie с localhost
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
-# Расширения
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-CORS(app, supports_credentials=True)
 
-# Модель пользователя
+# Разрешаем CORS только с фронта
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -25,12 +26,15 @@ class User(db.Model, UserMixin):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Тестовый маршрут
+# Возвращаем JSON вместо HTML при 401
+@login_manager.unauthorized_handler
+def unauthorized():
+    return jsonify({"error": "Unauthorized"}), 401
+
 @app.route('/')
 def index():
     return jsonify({"message": "Backend is running"})
 
-# Регистрация
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -48,9 +52,9 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
+    login_user(new_user)  # сразу логиним после регистрации
     return jsonify({"message": "User registered successfully"}), 201
 
-# Логин
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -61,15 +65,14 @@ def login():
     if user and bcrypt.check_password_hash(user.password, password):
         login_user(user)
         return jsonify({"message": "Login successful"})
+
     return jsonify({"error": "Invalid credentials"}), 401
 
-# Проверка текущего пользователя
 @app.route('/me', methods=['GET'])
 @login_required
 def me():
     return jsonify({"id": current_user.id, "username": current_user.username})
 
-# Выход
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
@@ -78,5 +81,6 @@ def logout():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # создаём таблицы при первом запуске
-    app.run(debug=True)
+        db.create_all()
+    # host=localhost, чтобы cookie работали на localhost
+    app.run(debug=True, host="localhost", port=5000)

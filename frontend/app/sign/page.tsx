@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function SignPage() {
   const [username, setUsername] = useState("");
@@ -9,15 +11,18 @@ export default function SignPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const router = useRouter();
 
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/register", {
+      const res = await fetch("http://localhost:5000/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, lastName, email, password }),
+        credentials: "include", // 🔥 обязательно для cookie
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await res.json();
@@ -25,8 +30,11 @@ const handleSubmit = async (e: React.FormEvent) => {
       if (res.ok) {
         setMessage(data.message);
         setIsError(false);
+        setIsLoggedIn(true);
+        router.push("/profile"); // переход в профиль
       } else {
         setMessage(data.error || "Ошибка регистрации");
+        setIsLoggedIn(false);
         setIsError(true);
       }
     } catch (err) {
@@ -42,11 +50,9 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   return (
     <div className="p-4 flex flex-col gap-3 justify-center items-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-xl flex flex-col gap-7 p-2.5"
-      >
+      <form onSubmit={handleSubmit} className="w-xl flex flex-col gap-7 p-2.5">
         <h1 className="text-5xl font-bold">Sign in</h1>
+
         <input
           type="text"
           placeholder="Username*"
@@ -68,18 +74,20 @@ const handleSubmit = async (e: React.FormEvent) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="email"
           placeholder="Email*"
           className={
-            "w-full p-2.5 rounded-2xl border-2 text-xl" +
-            `${isError ? " border-error" : " border-primary-border"} ${
-              isError ? " text-error" : " text-foreground"
-            }`
+            "w-full p-2.5 rounded-2xl border-2 text-xl " +
+            (isError
+              ? "border-error text-error"
+              : "border-primary-border text-foreground")
           }
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          value={email}
+          onChange={(e) => setUsername(e.target.value)}
         />
+
         <input
           type="password"
           placeholder="Password*"
@@ -92,20 +100,29 @@ const handleSubmit = async (e: React.FormEvent) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button
           type="submit"
-          className="w-full p-2 bg-submit border-submit border-2 border-solid transition-all rounded-2xl cursor-pointer hover:bg-transparent hover:text-submit hover:text-xl"
+          className="w-full h-12 p-2 bg-submit border-submit border-2 border-solid transition-all rounded-2xl cursor-pointer hover:bg-transparent hover:text-submit hover:text-xl"
         >
           Зарегистрироваться
         </button>
       </form>
+
       {message && (
         <p
-          className={"mt-2 text-lg " + `${isError ? "text-error " : "text-foreground"}`}
+          className={
+            "mt-2 text-lg " + `${isError ? "text-error " : "text-foreground"}`
+          }
         >
           {message}
         </p>
       )}
     </div>
   );
+}
+
+{
+  /*
+   */
 }
