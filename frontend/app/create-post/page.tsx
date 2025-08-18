@@ -174,7 +174,7 @@ export default function CreatePost() {
               `${isDescriptionError ? " text-error" : " text-foreground"}`
             }
             rows={7}
-            onChange={(e)=>handleDescription(e)}
+            onChange={handleDescription}
             value={description}
           ></textarea>
           <span>{description.length}/1000</span>
