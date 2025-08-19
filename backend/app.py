@@ -1,27 +1,8 @@
-<<<<<<< HEAD
-from flask import Flask, request, jsonify
-=======
 from flask import Flask, request, jsonify, send_from_directory
->>>>>>> c80ee0c (add-posts)
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_cors import CORS
-<<<<<<< HEAD
-
-# Инициализация приложения
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SECRET_KEY'] = 'secret123'
-
-# Расширения
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
-CORS(app, supports_credentials=True)
-
-# Модель пользователя
-=======
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
@@ -49,13 +30,10 @@ login_manager = LoginManager(app)
 CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 # === МОДЕЛИ ===
->>>>>>> c80ee0c (add-posts)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-<<<<<<< HEAD
-=======
     avatar = db.Column(db.String(200), default='default.png')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
@@ -129,31 +107,11 @@ def save_file(file):
         file.save(file_path)
         return unique_filename
     return None
->>>>>>> c80ee0c (add-posts)
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-<<<<<<< HEAD
-# Тестовый маршрут
-@app.route('/')
-def index():
-    return jsonify({"message": "Backend is running"})
-
-# Регистрация
-@app.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-
-    if not username or not password:
-        return jsonify({"error": "Missing username or password"}), 400
-
-    if User.query.filter_by(username=username).first():
-        return jsonify({"error": "User already exists"}), 400
-=======
 @login_manager.unauthorized_handler
 def unauthorized():
     return jsonify({"error": "Unauthorized"}), 401
@@ -182,23 +140,12 @@ def register():
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Пользователь уже существует"}), 400
->>>>>>> c80ee0c (add-posts)
 
     hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = User(username=username, password=hashed_pw)
     db.session.add(new_user)
     db.session.commit()
 
-<<<<<<< HEAD
-    return jsonify({"message": "User registered successfully"}), 201
-
-# Логин
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-=======
     login_user(new_user)
     return jsonify({"message": "Пользователь успешно зарегистрирован"}), 201
 
@@ -214,40 +161,20 @@ def login():
 
     # Санитизация имени пользователя
     username = sanitize_text(username)
->>>>>>> c80ee0c (add-posts)
 
     user = User.query.filter_by(username=username).first()
     if user and bcrypt.check_password_hash(user.password, password):
         login_user(user)
-<<<<<<< HEAD
-        return jsonify({"message": "Login successful"})
-    return jsonify({"error": "Invalid credentials"}), 401
-
-# Проверка текущего пользователя
-@app.route('/me', methods=['GET'])
-@login_required
-def me():
-    return jsonify({"id": current_user.id, "username": current_user.username})
-
-# Выход
-=======
         return jsonify({"message": "Вход выполнен успешно"})
 
     return jsonify({"error": "Неверные учетные данные"}), 401
 
->>>>>>> c80ee0c (add-posts)
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
     return jsonify({"message": "Logged out"})
 
-<<<<<<< HEAD
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # создаём таблицы при первом запуске
-    app.run(debug=True)
-=======
 @app.route('/me', methods=['GET'])
 @login_required
 def me():
@@ -401,4 +328,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True, host="localhost", port=5000)
->>>>>>> c80ee0c (add-posts)

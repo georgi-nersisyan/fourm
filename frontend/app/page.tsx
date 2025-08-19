@@ -1,22 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-<<<<<<< HEAD
-import { postItems } from "./components/post-items";
-import Posts from "./components/posts";
-
-export default function Home() {
-  const [posts, setPosts] = useState(postItems);
-
-  useEffect(() => {
-    const savedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
-    setPosts([...postItems, ...savedPosts]);
-  }, []);
-
-  return (
-    <div className="h-[200vh]">
-      <Posts postsItems={posts} />
-=======
 import { IPost } from "./components/post-items";
 import Posts from "./components/posts";
 
@@ -75,7 +59,6 @@ export default function Home() {
           <div className="text-gray-400 text-xl">Постов пока нет. Создайте первый пост!</div>
         </div>
       )}
->>>>>>> c80ee0c (add-posts)
     </div>
   );
 }
