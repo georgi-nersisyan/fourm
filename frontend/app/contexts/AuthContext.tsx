@@ -7,6 +7,8 @@ interface User {
   username: string;
   avatar: string;
   created_at: string;
+  email: string;
+  bio: string;
 }
 
 interface AuthContextType {
@@ -78,7 +80,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Проверяем авторизацию при загрузке
   useEffect(() => {
     refreshUser();
   }, []);

@@ -5,7 +5,10 @@ import { useState } from "react";
 
 export default function SignPage() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [bio, setBio] = useState("");
+  const [avatar, setAvatar] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,8 +17,8 @@ export default function SignPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !password) {
-      setMessage("Заполните все поля");
+    if (!username || !email || !password) {
+      setMessage("Заполните обязательные поля");
       setIsError(true);
       return;
     }
@@ -25,11 +28,17 @@ export default function SignPage() {
     setMessage("");
 
     try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('password', password);
+      if (bio) formData.append('bio', bio);
+      if (avatar) formData.append('avatar', avatar);
+
       const res = await fetch("http://localhost:5000/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username, password }),
+        body: formData,
       });
 
       const data = await res.json();
@@ -68,6 +77,19 @@ export default function SignPage() {
         />
 
         <input
+          type="email"
+          placeholder="Email*"
+          className={
+            "w-full p-2.5 rounded-2xl border-2 text-xl " +
+            (isError
+              ? "border-error text-error"
+              : "border-primary-border text-foreground")
+          }
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
           type="password"
           placeholder="Password*"
           className={
@@ -78,6 +100,22 @@ export default function SignPage() {
           }
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <textarea
+          placeholder="Bio (до 500 символов)"
+          maxLength={500}
+          className="w-full p-2.5 rounded-2xl border-2 text-xl border-primary-border resize-none"
+          rows={6}
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+        />
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setAvatar(e.target.files?.[0] || null)}
+          className="block w-full p-2.5 rounded-2xl border-2 text-gray-300 border-primary-border hover:border-primary transition-colors cursor-pointer"
         />
 
         <button

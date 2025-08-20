@@ -9,6 +9,7 @@ import os
 import uuid
 import re
 import html
+from sqlalchemy import text
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///simple_forum.db'
@@ -36,6 +37,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150), nullable=False)
     avatar = db.Column(db.String(200), default='default.png')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    email = db.Column(db.String(150), unique=True)
+    bio = db.Column(db.Text, default='')
     
     posts = db.relationship('Post', backref='author', lazy=True, cascade='all, delete-orphan')
     
@@ -81,6 +84,13 @@ def validate_password(password):
         return False
     return True
 
+def validate_email(email):
+    """Простая валидация email"""
+    if not email or len(email) > 150:
+        return False
+    # Простой regex для email
+    return re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email) is not None
+
 def validate_post_content(title, content):
     """Валидация содержимого поста"""
     if not title or not content:
@@ -124,25 +134,54 @@ def index():
 # Авторизация
 @app.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    username = data.get('username', '').strip()
-    password = data.get('password', '').strip()
+    avatar_filename = None
+    if request.content_type and 'multipart/form-data' in request.content_type:
+        form = request.form
+        username = form.get('username', '').strip()
+        email = form.get('email', '').strip()
+        password = form.get('password', '').strip()
+        bio = form.get('bio', '').strip()
+
+        # Обработка аватара
+        if 'avatar' in request.files:
+            f = request.files['avatar']
+            if f and f.filename:
+                avatar_filename = save_file(f)
+                if not avatar_filename:
+                    return jsonify({"error": "Неверный формат аватарки"}), 400
+    else:
+        data = request.get_json() or {}
+        username = (data.get('username') or '').strip()
+        email = (data.get('email') or '').strip()
+        password = (data.get('password') or '').strip()
+        bio = (data.get('bio') or '').strip()
 
     # Валидация входных данных
     if not validate_username(username):
         return jsonify({"error": "Неверное имя пользователя (3-50 символов, только буквы, цифры и _)"}), 400
 
+    if not validate_email(email):
+        return jsonify({"error": "Неверный email"}), 400
+
     if not validate_password(password):
         return jsonify({"error": "Неверный пароль (6-128 символов)"}), 400
 
-    # Санитизация имени пользователя
+    # Санитизация
     username = sanitize_text(username)
+    email = sanitize_text(email)
+    bio = sanitize_text(bio)[:500]
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Пользователь уже существует"}), 400
 
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "Email уже используется"}), 400
+
     hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, password=hashed_pw)
+    new_user = User(username=username, password=hashed_pw, email=email, bio=bio)
+    if avatar_filename:
+        new_user.avatar = avatar_filename
+
     db.session.add(new_user)
     db.session.commit()
 
@@ -181,6 +220,8 @@ def me():
     return jsonify({
         "id": current_user.id,
         "username": current_user.username,
+        "email": current_user.email,
+        "bio": current_user.bio,
         "avatar": current_user.avatar,
         "created_at": current_user.created_at.isoformat()
     })
@@ -188,7 +229,11 @@ def me():
 # Посты
 @app.route('/posts', methods=['GET'])
 def get_posts():
-    posts = Post.query.order_by(Post.created_at.desc()).all()
+    user_id = request.args.get('user_id', type=int)
+    query = Post.query
+    if user_id:
+        query = query.filter_by(user_id=user_id)
+    posts = query.order_by(Post.created_at.desc()).all()
     posts_data = []
     
     for post in posts:
@@ -324,7 +369,36 @@ def update_profile():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# Публичный профиль пользователя
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return jsonify({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "bio": user.bio,
+        "avatar": user.avatar,
+        "created_at": user.created_at.isoformat()
+    })
+
+def ensure_db_columns():
+    """Добавляем недостающие колонки email и bio в таблицу user для SQLite."""
+    try:
+        with db.engine.connect() as conn:
+            cols = conn.execute(text("PRAGMA table_info('user')")).fetchall()
+            col_names = {c[1] for c in cols}
+            if 'email' not in col_names:
+                conn.execute(text("ALTER TABLE user ADD COLUMN email VARCHAR(150)"))
+            if 'bio' not in col_names:
+                conn.execute(text("ALTER TABLE user ADD COLUMN bio TEXT DEFAULT ''"))
+            conn.commit()
+    except Exception:
+        # Тихо игнорируем, если БД ещё не создана
+        pass
+
 if __name__ == '__main__':
     with app.app_context():
+        ensure_db_columns()
         db.create_all()
     app.run(debug=True, host="localhost", port=5000)

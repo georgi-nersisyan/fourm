@@ -1,6 +1,7 @@
 import React from 'react';
 import { IPost } from './post-items';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface PostProps {
   post: IPost;
@@ -20,7 +21,7 @@ export default function Post({ post }: PostProps) {
   return (
     <div className="w-full max-w-2xl p-6 rounded-lg shadow-lg bg-gray-800 border border-gray-700">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-white">@{post.author.username}</h4>
+        <Link href={`/user/${post.author.id}`} className="font-semibold text-white hover:underline">@{post.author.username}</Link>
         <p className="text-gray-400 text-sm">{formatDate(post.created_at)}</p>
       </div>
 
