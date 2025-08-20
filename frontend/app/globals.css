@@ -8,9 +8,16 @@
   --primary-border: #1a2b3c;
   --submit: #1a66e8;
   --error: #ff4d4d;
+<<<<<<< HEAD
   --login: #be302e;
   --sign: #2e63be;
   --link: #497ace;
+=======
+  --login: #c0341e;
+  --sign: #2e63be;
+  --link: #497ace;
+  --logout: #db110e;
+>>>>>>> c80ee0c (add-posts)
 }
 
 @theme inline {
@@ -23,8 +30,14 @@
   --color-submit: var(--submit);
   --color-error: var(--error);
   --color-login: var(--login);
+<<<<<<< HEAD
   --color-link: var(--link);
   --color-sign: var(--sign);
+=======
+  --color-sign: var(--sign);
+  --color-link: var(--link);
+  --color-logout: var(--logout);
+>>>>>>> c80ee0c (add-posts)
   --font-mono: var(--font-geist-mono);
 }
 

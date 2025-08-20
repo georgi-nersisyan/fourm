@@ -10,6 +10,7 @@ import CreatePostBtn from "./create-post-btn";
 import { IPost, postItems } from "./post-items";
 import LoginBtn from "./login-btn";
 import SigninBtn from "./sign-btn";
+<<<<<<< HEAD
 
 export default function Header() { 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -22,6 +23,21 @@ export default function Header() {
           alt="logo"
           width={120}
           height={40}
+=======
+import { useAuth } from "../contexts/AuthContext";
+
+export default function Header() { 
+  const {isLoggedIn, setIsLoggedIn} = useAuth();
+
+  return (
+    <header className="flex items-center justify-between px-5 py-2 bg-header-bg text-white sticky top-0 z-100">
+      <Link href="/" >
+        <Image
+          src="/images/logo.png"
+          alt="logo"
+          width={80}
+          height={30}
+>>>>>>> c80ee0c (add-posts)
           className="object-contain"
         />
       </Link>
@@ -41,4 +57,8 @@ export default function Header() {
       }
     </header>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> c80ee0c (add-posts)

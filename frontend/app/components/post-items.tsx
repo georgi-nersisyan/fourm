@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export const postItems:IPost[] = [
     {
         id: 1,
@@ -18,10 +19,30 @@ export const postItems:IPost[] = [
     }
 ]
 
+=======
+// Простые интерфейсы для постов
+export interface IAuthor {
+    id: number;
+    username: string;
+    avatar: string;
+}
+
+export interface IPost {
+    id: number;
+    title: string;
+    content: string;
+    image?: string;
+    created_at: string;
+    author: IAuthor;
+}
+
+// Для обратной совместимости со старыми постами
+>>>>>>> c80ee0c (add-posts)
 export interface IMedia {
     id: number;
     src: string;
     type: "image" | "video";
+<<<<<<< HEAD
     name?:string,
     size?:number
 }
@@ -32,3 +53,11 @@ export interface IPost {
     content: string,
     media?: IMedia[],
 }
+=======
+    name?: string;
+    size?: number;
+}
+
+// Мок данные для разработки
+export const postItems: IPost[] = [];
+>>>>>>> c80ee0c (add-posts)
