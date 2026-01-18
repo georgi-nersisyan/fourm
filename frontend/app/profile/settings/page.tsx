@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import Image from 'next/image';
 
@@ -125,6 +126,14 @@ export default function ProfileSettings() {
   return (
     <div className="min-h-screen p-6 bg-gray-900">
       <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <Link 
+            href="/profile"
+            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            ← Назад к профилю
+          </Link>
+        </div>
         <h1 className="text-3xl font-bold text-white mb-8">Настройки профиля</h1>
 
         {/* Аватарка */}
@@ -134,9 +143,11 @@ export default function ProfileSettings() {
           <div className="flex items-center gap-6">
             <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-600">
               {avatarPreview ? (
-                <img 
+                <Image 
                   src={avatarPreview} 
                   alt="Превью аватарки" 
+                  width={96}
+                  height={96}
                   className="w-full h-full object-cover"
                 />
               ) : user.avatar && user.avatar !== 'default.png' ? (

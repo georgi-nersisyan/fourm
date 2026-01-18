@@ -34,6 +34,14 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <Link 
+            href="/"
+            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            ← Назад на главную
+          </Link>
+        </div>
         <div className="bg-gray-800 rounded-lg p-6">
           <div className="flex items-center gap-6 mb-6">
             <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-300">
@@ -54,9 +62,13 @@ export default function ProfilePage() {
             
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-white">{user.username}</h1>
-              <p className="text-gray-400">
-                На сайте с {user.created_at ? formatDate(user.created_at) : 'неизвестно'}
-              </p>
+              <p className="text-gray-400">На сайте с {user.created_at ? formatDate(user.created_at) : 'неизвестно'}</p>
+              {user.email && (
+                <p className="text-gray-300 mt-2">Email: {user.email}</p>
+              )}
+              {user.bio && (
+                <p className="text-gray-300 mt-2 whitespace-pre-wrap">{user.bio}</p>
+              )}
             </div>
           </div>
 

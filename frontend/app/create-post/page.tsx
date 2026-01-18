@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "../contexts/AuthContext";
 import Image from "next/image";
 
@@ -11,6 +12,7 @@ export default function CreatePost() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [postType, setPostType] = useState<'post' | 'question'>('post');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,7 @@ export default function CreatePost() {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', content);
+      formData.append('post_type', postType);
       if (imageFile) {
         formData.append('image', imageFile);
       }
@@ -85,9 +88,31 @@ export default function CreatePost() {
   return (
     <div className="min-h-screen p-6 bg-gray-900">
       <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <Link 
+            href="/"
+            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+          >
+            ← Назад на главную
+          </Link>
+        </div>
         <h1 className="text-3xl font-bold text-white mb-8">Создать пост</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Тип поста *
+            </label>
+            <select
+              value={postType}
+              onChange={(e) => setPostType(e.target.value as 'post' | 'question')}
+              className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="post">Обычный пост</option>
+              <option value="question">Вопрос</option>
+            </select>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Заголовок *
@@ -97,7 +122,7 @@ export default function CreatePost() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none"
-              placeholder="Введите заголовок поста"
+              placeholder={postType === 'question' ? "Введите вопрос" : "Введите заголовок поста"}
               maxLength={200}
             />
             <div className="text-right text-sm text-gray-400 mt-1">

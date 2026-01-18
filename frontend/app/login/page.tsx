@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function LoginPage() {
@@ -39,7 +40,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="p-4 flex flex-col gap-3 justify-center items-center">
+    <div className="p-4 flex flex-col gap-3 justify-center items-center min-h-screen">
+      <div className="mb-6">
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+        >
+          ← Назад на главную
+        </Link>
+      </div>
       <form onSubmit={handleSubmit} className="w-xl flex flex-col gap-7 p-2.5">
         <h1 className="text-5xl font-bold">Login</h1>
 
