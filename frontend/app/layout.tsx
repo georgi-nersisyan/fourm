@@ -26,10 +26,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+<<<<<<< HEAD
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthProvider>
+=======
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>    
+>>>>>>> 3879534 (extend profile and add validation)
           <Header />
           {children}
         </AuthProvider>
