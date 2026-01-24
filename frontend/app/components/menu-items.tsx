@@ -2,10 +2,7 @@ import { FiHome } from "react-icons/fi";
 import { TbChartBarPopular } from "react-icons/tb";
 import { LiaQuestionSolid } from "react-icons/lia";
 import { MdDensitySmall } from "react-icons/md";
-<<<<<<< HEAD
 import { FiBookmark, FiBell, FiAward, FiMessageCircle } from "react-icons/fi";
-=======
->>>>>>> 3879534 (extend profile and add validation)
 
 export const menuItems: MenuItem[] = [
   {
@@ -32,7 +29,6 @@ export const menuItems: MenuItem[] = [
     slug: "/all",
     icon: <MdDensitySmall size={20} />,
   },
-<<<<<<< HEAD
   {
     id: 5,
     title: "Bookmarks",
@@ -57,8 +53,6 @@ export const menuItems: MenuItem[] = [
     slug: "/chat",
     icon: <FiMessageCircle size={20} />,
   },
-=======
->>>>>>> 3879534 (extend profile and add validation)
 ];
 
 export interface MenuItem {

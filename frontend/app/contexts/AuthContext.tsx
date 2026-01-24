@@ -1,6 +1,5 @@
 'use client'
 
-<<<<<<< HEAD
 import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 
 interface User {
@@ -11,28 +10,21 @@ interface User {
   email: string;
   bio: string;
 }
-=======
-import { createContext, useState, useContext, ReactNode } from "react";
->>>>>>> 3879534 (extend profile and add validation)
 
 interface AuthContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (val: boolean) => void;
-<<<<<<< HEAD
   user: User | null;
   setUser: (user: User | null) => void;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
-=======
->>>>>>> 3879534 (extend profile and add validation)
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-<<<<<<< HEAD
   const [user, setUser] = useState<User | null>(null);
 
   const refreshUser = async () => {
@@ -102,11 +94,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout, 
       refreshUser 
     }}>
-=======
-
-  return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
->>>>>>> 3879534 (extend profile and add validation)
       {children}
     </AuthContext.Provider>
   );

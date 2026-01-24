@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-import { IPost, IComment, ITag } from './post-items';
+import { IPost, IComment } from './post-items';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,7 +16,6 @@ export default function Post({ post }: PostProps) {
   const [newComment, setNewComment] = useState('');
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [userReaction, setUserReaction] = useState<'like' | 'dislike' | null>(null);
-  const [tags, setTags] = useState<ITag[]>([]);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -322,23 +320,4 @@ export default function Post({ post }: PostProps) {
       )}
     </div>
   );
-=======
-import React from 'react'
-import { IPost } from './post-items'
-import PostSwiper from './post-swiper'
-
-interface PostProps{
-  post: IPost
-}
-
-export default function Post({post}:PostProps) {
-  return (
-    <div className='w-3xl p-4 rounded-lg shadow-md bg-post-bg flex flex-col justify-center gap-3'>
-        <h4 className='text-3xl break-words whitespace-pre-wrap'>{post.title.length >= 50 ? post.title.slice(0, 50)+'...' : post.title}</h4>
-        <span className='text-gray-300 break-words whitespace-pre-wrap'>{post.content}</span>
-
-        {post.media ? <PostSwiper media={post.media} /> : null}
-    </div>
-  )
->>>>>>> 3879534 (extend profile and add validation)
 }

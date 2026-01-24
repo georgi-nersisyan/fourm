@@ -1,19 +1,13 @@
 import Link from 'next/link'
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react'
 import { MenuItem } from './menu-items'
 import { useAuth } from '../contexts/AuthContext'
-=======
-import React from 'react'
-import { MenuItem } from './menu-items'
->>>>>>> 3879534 (extend profile and add validation)
 
 interface NavItemProps {
     menuItem: MenuItem
 }
 
 export default function NavItem({menuItem}:NavItemProps) {
-<<<<<<< HEAD
   const { user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -50,13 +44,6 @@ export default function NavItem({menuItem}:NavItemProps) {
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
-=======
-  return (
-    <li>
-      <Link href={menuItem.slug} className='text-lg flex gap-2 items-center transition-colors hover:text-link'>
-        {menuItem.title}
-        {menuItem.icon}
->>>>>>> 3879534 (extend profile and add validation)
       </Link>
     </li>
   )
