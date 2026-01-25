@@ -12,6 +12,7 @@
   --sign: #2e63be;
   --link: #497ace;
   --logout: #db110e;
+  --profile: #121f24;
 }
 
 @theme inline {
@@ -27,6 +28,7 @@
   --color-sign: var(--sign);
   --color-link: var(--link);
   --color-logout: var(--logout);
+  --color-profile: var(--profile);
   --font-mono: var(--font-geist-mono);
 }
 

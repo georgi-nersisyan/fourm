@@ -74,16 +74,14 @@ export default function CreatePost() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.length) {
       setIsTitleError(true);
       return;
     }
 
-    const savedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
-    const newPost = {
-      id: Date.now(),
+    const payload = {
       title,
       content: description,
       media: files.map((file) => ({
@@ -95,7 +93,23 @@ export default function CreatePost() {
       })),
     };
 
-    localStorage.setItem("posts", JSON.stringify([...savedPosts, newPost]));
+    try {
+      const res = await fetch("http://localhost:5000/posts", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Ошибка при создании поста");
+        return;
+      }
+    } catch (err) {
+      alert("Сервер недоступен");
+      return;
+    }
 
     setTitle("");
     setDescription("");
