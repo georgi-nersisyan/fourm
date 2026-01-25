@@ -3,7 +3,6 @@
 :root {
   --background: #000c24;
   --foreground: #c7c7c7;
-  --profile: #0e191d;
   --header-bg: #101c22;
   --post-bg: #121f29;
   --primary-border: #1a2b3c;
@@ -13,12 +12,12 @@
   --sign: #2e63be;
   --link: #497ace;
   --logout: #db110e;
+  --profile: #121f24;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-profile: var(--profile);
   --font-sans: var(--font-geist-sans);
   --color-header-bg: var(--header-bg);
   --color-post-bg:  var(--post-bg);
@@ -29,6 +28,7 @@
   --color-sign: var(--sign);
   --color-link: var(--link);
   --color-logout: var(--logout);
+  --color-profile: var(--profile);
   --font-mono: var(--font-geist-mono);
 }
 
