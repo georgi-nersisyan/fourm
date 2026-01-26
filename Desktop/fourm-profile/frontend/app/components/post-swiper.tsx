@@ -5,7 +5,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { IMedia } from "./post-items";
 import { Navigation } from "swiper/modules";
-import Image from "next/image";
 
 interface ImagesSwiperProps {
   media: IMedia[];
@@ -28,11 +27,9 @@ export default function PostSwiper({ media }: ImagesSwiperProps) {
               key={media.id}
               className="flex items-center justify-center"
             >
-              <Image
+              <img
                 src={media.src}
                 alt=""
-                width={800}
-                height={500}
                 className="max-w-full max-h-full object-contain rounded-2xl"
               />
             </SwiperSlide>
