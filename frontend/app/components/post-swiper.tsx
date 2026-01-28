@@ -31,15 +31,9 @@ export default function PostSwiper({ media }: ImagesSwiperProps) {
               <Image
                 src={media.src}
                 alt=""
-<<<<<<< HEAD
-                width={800}
-                height={500}
-                className="max-w-full max-h-full object-contain rounded-2xl"
-=======
                 width="800"
                 height="500"
                 className="max-w-full max-h-full object-cover rounded-2xl"
->>>>>>> e25313b (add-reactions)
               />
             </SwiperSlide>
           ) : (
