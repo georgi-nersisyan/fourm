@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import Image from "next/image";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<{
@@ -270,20 +270,9 @@ export default function ProfilePage() {
             {posts.length ? (
               <ul className="flex flex-col gap-3">
                 {posts.map((p) => (
-                  <li key={p.id} className="p-3 border rounded-2xl">
-                    <h5 className="text-xl font-semibold">{p.title}</h5>
-                    {p.content && <p className="text-sm">{p.content}</p>}
-                    <div className="flex gap-2 mt-2">
-                      {p.media &&
-                        p.media.map((m: any, i: number) =>
-                          m.type === "image" ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img key={i} src={m.src} alt={m.name} className="w-24 h-24 object-cover rounded" />
-                          ) : (
-                            <video key={i} src={m.src} className="w-32 h-24" controls />
-                          )
-                        )}
-                    </div>
+                  <li key={p.id} className="p-3 border border-primary-border rounded-lg flex flex-col gap-2">
+                    <Link href={`/posts/${p.id}`}><h5 className="text-xl font-semibold">{p.title.length >= 15 ? p.title.slice(0, 15)+'...' : p.title}</h5></Link>
+                    {p.content && <p className="text-sm">{p.content.length >= 50 ? p.content.slice(0, 50)+'...' : p.content}</p>}
                   </li>
                 ))}
               </ul>
