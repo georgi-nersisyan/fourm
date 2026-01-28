@@ -31,4 +31,11 @@ export interface IPost {
     title: string,
     content: string,
     media?: IMedia[],
+    author: {
+        id: number,
+        username: string,
+        avatar: string
+    }
+    likes: object[],
+    comments: object[],
 }
