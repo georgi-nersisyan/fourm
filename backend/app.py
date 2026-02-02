@@ -15,6 +15,8 @@ from datetime import timedelta
 import os
 import json
 
+from sqlalchemy import or_
+
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
@@ -363,16 +365,23 @@ def toggle_like(post_id):
 
     return jsonify({"liked": True})
 
-@app.route("/posts/<int:post_id>", methods=["GET"])
-def get_post(post_id):
-    post = Post.query.get_or_404(post_id)
+@app.route("/posts/<int:post_id>", methods=["PUT"])
+@login_required
+def update_post(post_id):
+    post = Post.query.filter_by(id=post_id, user_id=current_user.id).first()
 
-    return jsonify(
-        post.to_dict(
-            current_user_id=current_user.id
-            if current_user.is_authenticated else None
-        )
-    )
+    if not post:
+        return jsonify({"error": "Post not found"}), 404
+
+    data = request.get_json() or {}
+
+    post.title = data.get("title", post.title)
+    post.content = data.get("description", post.content)
+    post.media = json.dumps(data.get("media")) if data.get("media") else post.media
+
+    db.session.commit()
+
+    return jsonify({"message": "Post updated"})
 
 @app.route("/posts/<int:post_id>/comments", methods=["POST"])
 @login_required
@@ -405,6 +414,41 @@ def add_comment(post_id):
             ),
         },
     }), 201
+
+@app.route("/my-posts/<int:post_id>", methods=["DELETE"])
+@login_required
+def delete_my_post(post_id):
+    post = Post.query.filter_by(id=post_id, user_id=current_user.id).first()
+
+    if not post:
+        return jsonify({"error": "Post not found"}), 404
+
+    db.session.delete(post)
+    db.session.commit()
+
+    return jsonify({"message": "Post deleted"})
+
+@app.route("/posts/<int:post_id>", methods=["GET"])
+def get_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return jsonify(post.to_dict(
+        current_user_id=current_user.id if current_user.is_authenticated else None
+    ))
+
+@app.route("/posts/search", methods=["GET"])
+def search_posts():
+    query = request.args.get("q", "").strip()
+    if not query:
+        return jsonify([])
+
+    posts = Post.query.filter(
+        or_(
+            Post.title.like(f"%{query}%"),
+            Post.content.like(f"%{query}%")
+        )
+    ).order_by(Post.id.desc()).all()
+
+    return jsonify([post.to_dict() for post in posts])
 
 if __name__ == "__main__":
     with app.app_context():
