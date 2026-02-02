@@ -21,9 +21,9 @@ export default function Post({ post }: PostProps) {
 
   const [comments, setComments] = useState(post.comments);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  const [isComment, setIsComment] = useState(
-    user ? post.comments.some((comment) => comment.id === user?.id) : false,
-  );
+  // const [isComment, setIsComment] = useState(
+  //   user ? post.comments.some((comment) => comment.id === user?.id) : false,
+  // );
 
   const onWrite = () => {
     setIsCommentsOpen(!isCommentsOpen);
@@ -144,7 +144,7 @@ export default function Post({ post }: PostProps) {
         />
         <button
           onClick={handleComment}
-          className="px-4 py-2 bg-submit rounded-lg"
+          className="px-4 py-2 bg-submit rounded-lg text-white cursor-pointer transition-colors hover:opacity-80"
         >
           Send
         </button>
@@ -153,7 +153,7 @@ export default function Post({ post }: PostProps) {
       <ul className="flex flex-col gap-3">
         {comments.map((comment) => {
           return (
-            <li key={comment.post_id} className="flex gap-2">
+            <li key={"comment-" + comment.id} className="flex gap-2">
               <Link href={`/profile/${comment.author.username}`}>
                 <img
                   src={comment.author.avatar}

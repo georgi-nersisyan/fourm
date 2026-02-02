@@ -1,42 +1,39 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import Posts from "../components/posts";
-import { postItems } from "../components/post-items";
+import { useSearch } from "../contexts/SearchContext";
 
 export default function PostsPage() {
-  const [posts, setPosts] = useState(postItems);
+  const { searchText, searchResults, isSearchSubmitted } = useSearch();
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
-      try {
+      setLoading(true);
+
+      if (!searchText || !isSearchSubmitted) {
         const res = await fetch("http://localhost:5000/posts", {
           credentials: "include",
         });
-        if (res.ok) {
-          const data = await res.json();
-          setPosts(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch posts:", err);
-      } finally {
-        setLoading(false);
+        const data = await res.json();
+        setPosts(data);
+      } else {
+        setPosts(searchResults);
       }
+
+      setLoading(false);
     };
 
     fetchPosts();
-  }, []);
+  }, [searchText, searchResults, isSearchSubmitted]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-xl">Загрузка...</p>
-      </div>
-    );
+  if (loading) return <p className="text-center mt-10">Загрузка...</p>;
+
+  if (searchText && posts.length === 0) {
+    return <p className="text-center mt-10">Ничего не найдено</p>;
   }
 
-  return (
-    <div className="h-[200vh]">
-      <Posts postsItems={posts} />
-    </div>
-  );
+  return <Posts postsItems={posts} />;
 }

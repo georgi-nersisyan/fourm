@@ -9,9 +9,9 @@ export default function ProfilePage() {
     id: number;
     username: string;
     email: string;
-    bio:string;
-    avatar:string;
-    last_name:string;
+    bio: string;
+    avatar: string;
+    last_name: string;
   } | null>(null);
   console.log(user);
 
@@ -26,7 +26,6 @@ export default function ProfilePage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const { isLoggedIn, setIsLoggedIn } = useAuth();
-  
 
   const ChangeNameBtn = () => {
     setIsChangeName(!isChangeName);
@@ -97,6 +96,79 @@ export default function ProfilePage() {
     }
   };
 
+  const changePassword = async () => {
+    setIsError(false);
+    setMessage("");
+    try {
+      const res = await fetch("http://localhost:5000/change-password", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message || "Пароль изменён");
+        setIsError(false);
+        setIsChangePassword(false);
+        setCurrentPassword("");
+        setNewPassword("");
+      } else {
+        setMessage(data.error || "Ошибка");
+        setIsError(true);
+      }
+    } catch (err) {
+      setMessage("Сервер недоступен");
+      setIsError(true);
+    }
+  };
+
+  const ChangeUsername = async () => {
+    setIsError(false);
+    setMessage("");
+    try {
+      const res = await fetch("http://localhost:5000/change-username", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ new_username: username }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message || "Username changed");
+        setIsError(false);
+        setIsChangeName(false);
+        setUser((u) => (u ? { ...u, username: data.username || username } : u));
+        setUsername("");
+      } else {
+        setMessage(data.error || "Ошибка");
+        setIsError(true);
+      }
+    } catch (err) {
+      setMessage("Сервер недоступен");
+      setIsError(true);
+    }
+  };
+
+  const handleDelete = async (postId:number) => {
+      try {
+        const res = await fetch(`http://localhost:5000/my-posts/${postId}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+        if (!res.ok) return;
+        console.log(5);
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+      } catch (err) {
+        // ignore for now
+      }
+  }
+
   if (loading) return <p className="text-xl">Загрузка...</p>;
 
   return (
@@ -104,7 +176,11 @@ export default function ProfilePage() {
       {user ? (
         <div className="w-xl flex flex-col gap-4 items-center bg-profile p-4 rounded-2xl">
           <div className="w-full flex gap-5 items-center">
-           <img src={user.avatar} alt="" className="w-20 h-20 object-cover rounded-sm" />
+            <img
+              src={user.avatar}
+              alt=""
+              className="w-20 h-20 object-cover rounded-sm"
+            />
 
             <div>
               <h3 className="text-6xl">{user.username}</h3>
@@ -146,33 +222,7 @@ export default function ProfilePage() {
                 />
 
                 <button
-                  onClick={async () => {
-                    setIsError(false);
-                    setMessage("");
-                    try {
-                      const res = await fetch("http://localhost:5000/change-username", {
-                        method: "POST",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ new_username: username }),
-                      });
-
-                      const data = await res.json();
-                      if (res.ok) {
-                        setMessage(data.message || "Username changed");
-                        setIsError(false);
-                        setIsChangeName(false);
-                        setUser((u) => (u ? { ...u, username: data.username || username } : u));
-                        setUsername("");
-                      } else {
-                        setMessage(data.error || "Ошибка");
-                        setIsError(true);
-                      }
-                    } catch (err) {
-                      setMessage("Сервер недоступен");
-                      setIsError(true);
-                    }
-                  }}
+                  onClick={ChangeUsername}
                   type="button"
                   className="w-full h-12 p-2 bg-sign border-sign border-2 border-solid transition-all rounded-2xl cursor-pointer hover:bg-transparent hover:text-sign hover:text-xl"
                 >
@@ -220,36 +270,7 @@ export default function ProfilePage() {
                 />
 
                 <button
-                  onClick={async () => {
-                    setIsError(false);
-                    setMessage("");
-                    try {
-                      const res = await fetch("http://localhost:5000/change-password", {
-                        method: "POST",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          current_password: currentPassword,
-                          new_password: newPassword,
-                        }),
-                      });
-
-                      const data = await res.json();
-                      if (res.ok) {
-                        setMessage(data.message || "Пароль изменён");
-                        setIsError(false);
-                        setIsChangePassword(false);
-                        setCurrentPassword("");
-                        setNewPassword("");
-                      } else {
-                        setMessage(data.error || "Ошибка");
-                        setIsError(true);
-                      }
-                    } catch (err) {
-                      setMessage("Сервер недоступен");
-                      setIsError(true);
-                    }
-                  }}
+                  onClick={changePassword}
                   type="button"
                   className="w-full h-12 p-2 bg-sign border-sign border-2 border-solid transition-all rounded-2xl cursor-pointer hover:bg-transparent hover:text-sign hover:text-xl"
                 >
@@ -270,9 +291,29 @@ export default function ProfilePage() {
             {posts.length ? (
               <ul className="flex flex-col gap-3">
                 {posts.map((p) => (
-                  <li key={p.id} className="p-3 border border-primary-border rounded-lg flex flex-col gap-2">
-                    <Link href={`/posts/${p.id}`}><h5 className="text-xl font-semibold">{p.title.length >= 15 ? p.title.slice(0, 15)+'...' : p.title}</h5></Link>
-                    {p.content && <p className="text-sm">{p.content.length >= 50 ? p.content.slice(0, 50)+'...' : p.content}</p>}
+                  <li
+                    key={p.id}
+                    className="p-3 border border-primary-border rounded-lg flex flex-col gap-2"
+                  >
+                    <Link href={`/posts/${p.id}`}>
+                      <h5 className="text-xl font-semibold">
+                        {p.title.length >= 15
+                          ? p.title.slice(0, 15) + "..."
+                          : p.title}
+                      </h5>
+                    </Link>
+                    {p.content && (
+                      <p className="text-sm text-gray-500">
+                        {p.content.length >= 50
+                          ? p.content.slice(0, 50) + "..."
+                          : p.content}
+                      </p>
+                    )}
+
+                    <div className="flex gap-2">
+                      <Link href={`/posts/${p.id}/edit`} className="w-1/2"><button className="w-full p-2 text-white rounded-lg cursor-pointer transition-colors bg-yellow-300 hover:bg-yellow-400 opacity-80">Edit</button></Link>
+                      <button className="w-1/2 p-2 text-white rounded-lg cursor-pointer transition-colors bg-red-500 hover:bg-red-600 opacity-80" onClick={() => handleDelete(p.id)}>Delete</button>
+                    </div>
                   </li>
                 ))}
               </ul>

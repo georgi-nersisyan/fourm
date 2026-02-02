@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface Props {
   params: {
@@ -18,6 +20,20 @@ interface Post {
   };
 }
 
+async function getMe() {
+const res = await fetch("http://localhost:5000/me", {
+credentials: "include",
+headers: {
+Cookie: cookies().toString(),
+},
+cache: "no-store",
+});
+
+
+if (!res.ok) return null;
+return res.json();
+}
+
 async function getUser(username: string) {
   const res = await fetch(`http://localhost:5000/users/${username}`, { cache: "no-store" });
   if (!res.ok) throw new Error("User not found");
@@ -31,8 +47,13 @@ async function getUserPosts(username: string) {
 }
 
 export default async function UserProfilePage({ params }: Props) {
+  const me = await getMe();
   const user = await getUser(params.user);
   const posts: Post[] = await getUserPosts(params.user);
+
+  if (me && me.username === params.user) {
+    redirect("/profile");
+  }
 
   return (
     <div className="p-4 flex flex-col gap-3 justify-center items-center">
@@ -63,7 +84,7 @@ export default async function UserProfilePage({ params }: Props) {
                     className="p-3 border border-primary-border rounded-lg flex flex-col gap-2"
                 >
                   <Link href={`/posts/${p.id}`}><h2 className="text-xl">{p.title}</h2></Link>
-                  <p>{p.content}</p>
+                  <p className="text-sm text-gray-500">{p.content.length >= 50 ? p.content.slice(0, 50)+'...' : p.content}</p>
                 </div>
               ))}
             </ul>
