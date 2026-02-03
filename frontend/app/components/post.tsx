@@ -82,6 +82,8 @@ export default function Post({ post }: PostProps) {
     }
   };
 
+  console.log("post:", post);
+
   return (
     <div className="w-3xl p-4 rounded-lg shadow-md bg-post-bg flex flex-col justify-center gap-3">
       <div className="flex gap-3 p-2 items-center">
@@ -96,6 +98,12 @@ export default function Post({ post }: PostProps) {
         <Link href={`/profile/${post.author.username}`}>
           <h4 className="text-xl">{post.author.username}</h4>
         </Link>
+
+        {
+        user && user.id !== post.author.id && <button className="w-40 p-2 bg-white border-2 border-solid border-white cursor-pointer rounded-3xl transition-all hover:bg-transparent hover:text-white">
+          Follow
+        </button>
+        }
       </div>
 
       <Link href={`/posts/${post.id}`}>
@@ -107,11 +115,11 @@ export default function Post({ post }: PostProps) {
       </Link>
       <span className="text-gray-300 break-words whitespace-pre-wrap">
         {post.content.length >= 100
-          ? post.content.slice(0, 100) + "..."
+          ? post.content.slice(0, 200) + "..."
           : post.content}
       </span>
 
-      {post.media ? <PostSwiper media={post.media} /> : null}
+      {post.media && post.media.length > 0 ? <PostSwiper media={post.media} /> : null}
 
       <div className="flex gap-4 items-center">
         <button

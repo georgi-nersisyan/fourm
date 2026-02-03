@@ -12,6 +12,8 @@ export default function FindBlock() {
 
     if (!searchText.trim()) {
       setSearchResults([]);
+      setIsSearchSubmitted(false);
+      return;
     }
 
     try {
@@ -35,7 +37,7 @@ export default function FindBlock() {
       onSubmit={handleSubmit}
       className="flex items-center gap-3 rounded-3xl border-2 p-2"
     >
-      <button type="submit">
+      <button type="submit" className="cursor-pointer">
         <IoSearch size={28} />
       </button>
 

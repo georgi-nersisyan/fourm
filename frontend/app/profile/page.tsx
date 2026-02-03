@@ -174,7 +174,7 @@ export default function ProfilePage() {
   return (
     <div className="p-4 flex flex-col gap-3 justify-center items-center">
       {user ? (
-        <div className="w-xl flex flex-col gap-4 items-center bg-profile p-4 rounded-2xl">
+        <div className="w-2xl flex flex-col gap-4 items-center bg-profile p-4 rounded-2xl">
           <div className="w-full flex gap-5 items-center">
             <img
               src={user.avatar}
@@ -296,14 +296,14 @@ export default function ProfilePage() {
                     className="p-3 border border-primary-border rounded-lg flex flex-col gap-2"
                   >
                     <Link href={`/posts/${p.id}`}>
-                      <h5 className="text-xl font-semibold">
+                      <h5 className="text-xl font-semibold break-words break-all min-w-0">
                         {p.title.length >= 15
                           ? p.title.slice(0, 15) + "..."
                           : p.title}
                       </h5>
                     </Link>
                     {p.content && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 break-words break-all min-w-0">
                         {p.content.length >= 50
                           ? p.content.slice(0, 50) + "..."
                           : p.content}

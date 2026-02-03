@@ -334,8 +334,23 @@ def get_posts_by_user(username):
 
 @app.route("/posts", methods=["GET"])
 def get_all_posts():
-    posts = Post.query.order_by(Post.id.desc()).all()
-    return jsonify([post.to_dict() for post in posts])
+    limit = int(request.args.get("limit", 10))
+    offset = int(request.args.get("offset", 0))
+
+    posts = (
+        Post.query
+        .order_by(Post.id.desc())
+        .limit(limit)
+        .offset(offset)
+        .all()
+    )
+
+    total = Post.query.count()
+
+    return jsonify({
+        "posts": [post.to_dict() for post in posts],
+        "hasMore": offset + limit < total
+    })
 
 
 @app.route("/my-posts", methods=["GET"])
